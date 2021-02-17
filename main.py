@@ -25,7 +25,7 @@ def diff_func(t, vec, args):
     rhs = (m1 * g) / np.exp(mu * (phi + (np.pi / 2)))
 
     delta_x = l - x
-    print("delta_x = ", delta_x)
+
     a = -m1 - m2
     b = -delta_x * m2 * np.sin(phi)
     c = m1 * g - m2 * v * w * np.sin(phi) - m2 * (w ** 2) * delta_x - m2 * g * np.sin(phi) + m2 * w * v * np.sin(
