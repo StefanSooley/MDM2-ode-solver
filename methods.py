@@ -5,7 +5,7 @@ import numpy as np
 def diff_func_L1(t, vec, args):
     """
         Defines the differential equations for the pulley system using the Lagrangian approach.
-        Method 1
+        Overleaf set of equations.
         Arguments:
             vec :  vector of the state variables:
                       w = [x,phi,v,w]
@@ -20,14 +20,14 @@ def diff_func_L1(t, vec, args):
     x, phi, v, w = vec
     m1, m2, l, mu, g = args
 
-    rhs = (m1 * g) / np.exp(mu * (phi + (np.pi / 2)))
+    rhs = (m1 * g) / np.exp(mu * -(phi + (np.pi / 2)))
     delta_x = l - x
 
     d_dt = [
         v,
         w,
-        (m2 * x * (w ** 2) - g * (m1 + m2 * np.sin(phi))) / (m1 + m2) - +rhs,
-        (-g * x * np.cos(phi) - 2 * x * v * w) / (x ** 2)  +rhs
+        (m2 * x * (w ** 2) - g * (m1 + m2 * np.sin(phi))) / (m1 + m2) + rhs,
+        (-g * x * np.cos(phi) - 2 * x * v * w) / (x ** 2) + rhs
 
     ]
 
@@ -37,7 +37,7 @@ def diff_func_L1(t, vec, args):
 def diff_func_L2(t, vec, args):
     """
         Defines the differential equations for the pulley system using a Lagrangian approach.
-        Method 2
+        Original set of equations
         Arguments:
             vec :  vector of the state variables:
                       w = [x,phi,v,w]
@@ -51,14 +51,9 @@ def diff_func_L2(t, vec, args):
 
     x, phi, v, w = vec
     m1, m2, l, mu, g = args
-    try:
-        rhs = (m1 * g) / np.exp(mu * -(phi + (np.pi / 2)))
-    except:
-        rhs = 10*20
-    #rhs = (m1 * g) / np.exp(mu * -(phi + (np.pi / 2)))
-    #print(rhs)
 
-    l = l-(phi/2*np.pi)*0.2
+    rhs = (m1 * g) / np.exp(mu * -(phi + (np.pi / 2)))
+
     delta_x = l - x
 
     a = -m1 - m2
@@ -73,8 +68,7 @@ def diff_func_L2(t, vec, args):
     v_dot = (f * b - c * e) / (a * e - d * b)
     w_dot = (f * a - c * d) / (b * d - e * a)
 
-
-    #print("w = {}, friction = {}".format(w, rhs))
+    # print("w = {}, friction = {}".format(w, rhs))
 
     d_dt = [
         v,
@@ -85,3 +79,38 @@ def diff_func_L2(t, vec, args):
 
     return d_dt
 
+
+def diff_func_L3(t, vec, args):
+    """
+        Defines the differential equations for the pulley system using a Lagrangian approach.
+        2nd set of equations
+        Arguments:
+            vec :  vector of the state variables:
+                      w = [x,phi,v,w]
+
+            t :  time
+
+            args : vector of the constant values:
+                      p = [m1, m2, l, mu, g]
+
+    """
+
+    x, phi, v, w = vec
+    m1, m2, l, mu, g = args
+
+    delta_x = l - x
+
+    rhs = (m1 * g) / np.exp(mu * -(phi + (np.pi / 2)))
+
+    v_dot = (rhs - g * m1 * np.sin(phi) - 2 * m2 * (w ** 2) * (delta_x) - g * m2) / m2
+    w_dot = (rhs + 4 * l * m1 * v * w + m2 * g * delta_x * np.cos(phi) - 4 * m1 * x * v * w) / (
+                2 * (l ** 2) * m1 + 2 * m1 * (x ** 2) - 4 * l * m1 * x)
+
+    d_dt = [
+        v,
+        w,
+        v_dot,
+        w_dot
+    ]
+
+    return d_dt

@@ -5,12 +5,12 @@ from plot import *
 from methods import *
 
 # Initial Conditions
-x0 = 0.001
+x0 = 0
 v0 = 0
 phi0 = 0
 w0 = 0
 # Constant values
-m1 = 10
+m1 = 100
 m2 = 1
 l = 20
 mu = 0.6
@@ -25,9 +25,9 @@ def main():
     args = [m1, m2, l, mu, g]
     initial_conds = [x0, phi0, v0, w0]
 
-    sol = solve_ivp(diff_func_L2, (t_0, t_end), initial_conds, method='BDF', args=([args]), dense_output=True)
+    sol = solve_ivp(diff_func_L3, (t_0, t_end), initial_conds, method='BDF', args=([args]), dense_output=True)
 
-    print("Success = {}, {}".format(sol.success,sol.message))
+    print("Integration success = {}, {}".format(sol.success,sol.message))
 
     plot_solution_panels(sol)
 
