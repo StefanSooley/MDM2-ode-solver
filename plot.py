@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 def plot_solution_panels(sol):
     fig, axs = plt.subplots(2, 2)
-
     axs[0, 0].plot(sol.t, sol.y[0])
     axs[0, 0].set_title('x against t')
     axs[0, 0].set_ylabel('x (m)')
