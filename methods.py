@@ -233,13 +233,30 @@ def diff_func_P(t, vec, args):
     r = 1  # Radius of the pulley in m
 
     if v < 0:
+        # Stage 2, the acceleration and velocity will stay at 0.
+        v = 0
         v_dot = 0
-        if l - x - phi * r <= 0.3:
-            w,w_dot = 0,0
 
+        # Since the rope has 0 thickness, m2 will continue to accelerate until it has Inf w which cannot be
+        # calculated using floating point numbers. To fix this, the rotations will stop when the rope is 1m on the LHS.
+
+        # (l - x - phi*r) is the approximation for the length of the rope on the LHS
+
+        if (l - x - phi * r) <= 1:
+
+            # w must return to 0 instantaneously when m2 stops, so w_dot is set to -10^3000 to approximate an infinite
+            # deceleration until w = 0.
+
+            if w < 0:
+                w_dot = 0
+            else:
+                w_dot = -(10*3000)
+                w = 0
         else:
+            # w_dot equation while the length of the LHS is longer than 2m
             w_dot = (-g * np.sin(phi) + r * w * w) / (l - x - phi * r)
     else:
+        # Stage 1
         v_dot = (m1 * g + m2 * np.exp(mu * phi) * (g * np.cos(phi) - (l - (phi * r) - x) * (w ** 2))) / (
                 m1 + m2 * np.exp(mu * phi))
         w_dot = (g * np.sin(phi) + 2 * v * w + x * w * w) / (l - phi * r - x)
@@ -250,5 +267,5 @@ def diff_func_P(t, vec, args):
         v_dot,
         w_dot
     ]
-    print(d_dt)
+
     return d_dt
