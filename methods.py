@@ -165,13 +165,13 @@ def diff_func_L5(t, vec, args):
     """
 
     x, phi, v, w = vec
-    m1, m2, l, mu, g = args
-    delta_x = l - x
+    m1, m2, l, mu, g, r = args
+    delta_x = l - x - phi*r
 
-    rhs = 1 / np.exp(mu * -(phi + (np.pi / 2)))
+    rhs = np.exp(mu*phi)
 
-    v_dot = (rhs - m1 * g + m2 * g * np.sin(phi) + m2 * (delta_x) * w * w) / (m1 + m2)
-    w_dot = ((rhs / m2 * g) + (delta_x) * np.cos(phi)) / (x * x - 4 * l * x)
+    v_dot = (-rhs+m1*g+0.5*w*w*m2-m2*np.sin(phi))/(m1+m2)
+    w_dot = (rhs-0.5*m2*w*w*r-r*m2*np.sin(phi)-phi*r*m2*np.cos(phi))/(m2*r)
     d_dt = [
         v,
         w,
@@ -198,11 +198,11 @@ def diff_func_N1(t, vec, args):
     """
 
     x, phi, v, w = vec
-    m1, m2, l, mu, g = args
+    m1, m2, l, mu, g, r = args
 
-    v_dot = (np.exp(mu * phi) * (x * w * w + g * np.sin(phi)) - ((m1 * g) / m2)) / (np.exp(mu * phi) + (m1 / m2))
-    print(v_dot)
-    w_dot = (g * np.cos(phi) - 2 * v * w) / x
+    v_dot = (np.exp(mu * phi) * ((l-x) * w * w + g * np.sin(phi)) - ((m1 * g) / m2)) / (np.exp(mu * phi) + (m1 / m2))
+
+    w_dot = (g * np.cos(phi) - 2 * v * w) / (l-x)
     d_dt = [
         v,
         w,
@@ -229,8 +229,7 @@ def diff_func_P(t, vec, args):
     """
 
     x, phi, v, w = vec
-    m1, m2, l, mu, g = args
-    r = 1  # Radius of the pulley in m
+    m1, m2, l, mu, g, r = args
 
     if v < 0:
         # Stage 2, the acceleration and velocity will stay at 0.
@@ -238,28 +237,30 @@ def diff_func_P(t, vec, args):
         v_dot = 0
 
         # Since the rope has 0 thickness, m2 will continue to accelerate until it has Inf w which cannot be
-        # calculated using floating point numbers. To fix this, the rotations will stop when the rope is 1m on the LHS.
+        # calculated using floating point numbers. To fix this, the rotations will stop when the rope is 0.1m on the
+        # LHS.
 
         # (l - x - phi*r) is the approximation for the length of the rope on the LHS
 
-        if (l - x - phi * r) <= 1:
+        if (l - x - phi * r) <= 0.01:
 
-            # w must return to 0 instantaneously when m2 stops, so w_dot is set to -10^3000 to approximate an infinite
+            # w must return to 0 instantaneously when m2 stops, so w_dot is set to -10^10000 to approximate an infinite
             # deceleration until w = 0.
 
-            if w < 0:
+            if w <= 0:
                 w_dot = 0
-            else:
-                w_dot = -(10*3000)
                 w = 0
+            else:
+                w_dot = -(10 * 10000)
+
         else:
             # w_dot equation while the length of the LHS is longer than 2m
-            w_dot = (-g * np.sin(phi) + r * w * w) / (l - x - phi * r)
+            w_dot = (g * np.sin(phi) + r * w * w) / (l - x - phi * r)
     else:
         # Stage 1
         v_dot = (m1 * g + m2 * np.exp(mu * phi) * (g * np.cos(phi) - (l - (phi * r) - x) * (w ** 2))) / (
                 m1 + m2 * np.exp(mu * phi))
-        w_dot = (g * np.sin(phi) + 2 * v * w + x * w * w) / (l - phi * r - x)
+        w_dot = (g * np.sin(phi) + 2 * v * w + r * w * w) / (l - phi * r - x)
 
     d_dt = [
         v,
