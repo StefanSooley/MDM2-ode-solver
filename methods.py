@@ -193,7 +193,7 @@ def diff_func_N1(t, vec, args):
             t :  time
 
             args : vector of the constant values:
-                      p = [m1, m2, l, mu, g]
+                      p = [m1, m2, l, mu, g, r]
 
     """
 
@@ -224,7 +224,7 @@ def diff_func_P(t, vec, args):
             t :  time
 
             args : vector of the constant values:
-                      p = [m1, m2, l, mu, g]
+                      p = [m1, m2, l, mu, g, r]
 
     """
 
