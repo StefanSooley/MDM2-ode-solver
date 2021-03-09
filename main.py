@@ -74,22 +74,30 @@ def main():
     initial_conds_2 = [x0, phi0, v0, w0]
     initial_conds_3 = [x0, phi0, v0, w0]
 
-    label_legend_list = ["$m2 = 40$", "$m2 = 60$", "$m2 = 80$"]
-
     args_arr = [args_1, args_2, args_3]
     initial_conds_arr = [initial_conds_1, initial_conds_2, initial_conds_3]
 
-    save_file_name = 'different m2 values'
-    t_range = (t_0, t_end)
-    max_step_size = 0.00001
-    sol1 = single_sol(initial_conds_1, t_range, args_1, max_step_size)
+    ########### The labels of the legend are in this list ###########
 
-    plot_solution_panels(sol1)
-    plot_colour_spiral(sol1, l, r)
-    plot_spiral(sol1, l, r)
-    # sol = multi_sol(initial_conds_arr, t_range, args_arr, max_step_size, False, save_file_name)
-    # plot_multi_sol_panels(sol, label_legend_list)
-    # plot_multi_spiral(sol, label_legend_list, args_arr)
+    label_legend_list = ["$m2 = 40$", "$m2 = 60$", "$m2 = 80$"]
+
+    #################################################################
+
+    ### The file will be saved to name 'different m2 values.data' ###
+
+    save_file_name = 'different m2 values'
+
+    #################################################################
+
+    t_range = (t_0, t_end)
+    max_step_size = 0.001
+
+    # If you don't want to save the solutions to a file, set the True to False and leave the save_file_name empty
+
+    sol = multi_sol(initial_conds_arr, t_range, args_arr, max_step_size, True, save_file_name)
+
+    plot_multi_sol_panels(sol, label_legend_list)
+    plot_multi_spiral(sol, label_legend_list, args_arr)
 
 
 if __name__ == '__main__':
@@ -107,6 +115,6 @@ if __name__ == '__main__':
     r = 1  # Radius of the "pulley"
     # Integration region
     t_0 = 0
-    t_end = 2.5
+    t_end = 10
 
     main()
